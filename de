@@ -145,7 +145,7 @@ local function tp(pos)
     end)
     
     while not completed do
-        if player.Character.Humanoid.Health <= 0 or not OrionLib.Flags["Autofarm"].Value then tween:Cancel() break end
+        if player.Character.Humanoid.Health <= 0 or not AutofarmOn == true then tween:Cancel() break end
         task.wait()
     end
 end
