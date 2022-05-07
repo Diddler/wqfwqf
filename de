@@ -2,7 +2,6 @@ local Mercury = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeei
 
 local mouse = game.Players.LocalPlayer:GetMouse()
 getrenv()._G.ask("Notification!","Check the Updates Tab")
-local myFlags = { state = false }
 
 local GUI = Mercury:Create{
     Name = "Mercury",
@@ -16,56 +15,58 @@ local GUI = Mercury:Create{
 local Tab = GUI:Tab{
 	Name = "Autofarm",
 	Icon = "rbxassetid://7072705757",
-	PremiumOnly = false
 }
 
 local Tab2 = GUI:Tab{
 	Name = "Misc",
 	Icon = "rbxassetid://7072707647",
-	PremiumOnly = false
 } 
-
-local Tab3 = GUI:Tab{
-	Name = "Spinning",
-	Icon = "rbxassetid://7072715646",
-	PremiumOnly = false
-}
 
 local Tab4 = GUI:Tab{
 	Name = "Updates",
 	Icon = "rbxassetid://7072717857",
-	PremiumOnly = false
 }
 
 Tab:Toggle{
 	Name = "Enabled",
 	StartingState = false,
 	Color = Color3.fromRGB(107, 255, 203),
-	Flag = "Autofarm"
+	Description = nil,
+	Callback = function(state) 
+	AutofarmOn = state
+
 }
 
 Tab:Toggle{
 	Name = "Energy Blade Mode (Don't enable if you don't have it)",
 	Default = false,
-	Flag = "Energy"
+	Description = nil,
+	Callback = function(state) end
+	Energy = state
 }
 
 Tab:Toggle{
 	Name = "Freeze NPC",
 	Default = false,
-	Flag = "Freeze"
+	Description = nil,
+	Callback = function(state) end
+	Freeze = state
 }
 
 Tab2:Toggle{
 	Name = "Punch Kill-Aura",
 	Default = false,
-	Flag = "Aura"
+	Description = nil,
+	Callback = function(state) end
+	Punch = state
 }
 
 Tab2:Toggle{
 	Name = "Energy Blade Kill-Aura (Need EB)",
 	Default = false,
-	Flag = "EnergyAura"
+	Description = nil,
+	Callback = function(state) end
+	EnergyAura = state
 }
 
 local auradistance
@@ -181,7 +182,7 @@ end
 
 spawn(function()
     while true do
-        if myFlags["Autofarm"].Value then
+        if AutofarmOn == true then then
         pcall(function()
                     local nearmob,dist = nil, math.huge
         for _, v in next, game:GetService("Workspace"):GetDescendants() do
@@ -208,7 +209,7 @@ spawn(function()
                         game:GetService("ReplicatedStorage").ToggleAbility:InvokeServer(true)
                         end
                         tp(nearmob.HumanoidRootPart.CFrame - nearmob.HumanoidRootPart.CFrame.lookVector * distance)
-                        if OrionLib.Flags["Freeze"].Value then
+                        if Freeze == true then
                         nearmob.HumanoidRootPart.Anchored = true
                         end
                         if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - nearmob.HumanoidRootPart.Position).Magnitude < distance + 5 then
@@ -216,7 +217,7 @@ spawn(function()
                         --wait()
                         --game:GetService('VirtualInputManager'):SendMouseButtonEvent(0,0,0,false,nil,1)
                         --punch(nearmob)
-                        if OrionLib.Flags["Energy"].Value then
+                        if Energy == true then
                         game:GetService("ReplicatedStorage").Damage:FireServer("DualSwordHeavy", nearmob.Humanoid, game.Players.LocalPlayer.Character.Cancellations.Value,{[1] = nearmob.Humanoid})
                         
                         else
@@ -241,7 +242,7 @@ end)
 spawn(function()
         game:GetService('RunService').Stepped:connect(function()
     pcall(function()
-        if myFlags["Autofarm"].Value then
+        if AutofarmOn == true then
             game.Players.LocalPlayer.Character.Head.name:Remove()
              game.Players.LocalPlayer.Character.Head.hpbar:Remove()
              game.Players.LocalPlayer.Character.Head.Jack:Remove()
@@ -261,7 +262,7 @@ local runservice = game:GetService("RunService")
 spawn(function()
 runservice.Heartbeat:Connect(function()
      pcall(function()
-        if myFlags["EnergyAura"].Value then
+        if EnergyAura == true then
          for i,v in pairs(workspace:GetChildren()) do
              if v.Name ~= game.Players.LocalPlayer.Name and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v.PrimaryPart ~= nil and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.PrimaryPart.Position).Magnitude < auradistance then
         game:GetService("ReplicatedStorage").Damage:FireServer("DualSwordHeavy", v.Humanoid, game.Players.LocalPlayer.Character.Cancellations.Value,{[1] = v.Humanoid})
@@ -272,10 +273,25 @@ end)
 end)
 end)
 
+spawn(function()
+while true do
+     pcall(function()
+        if Punch == true then
+         for i,v in pairs(workspace:GetChildren()) do
+             if v.Name ~= game.Players.LocalPlayer.Name and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v.PrimaryPart ~= nil and (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.PrimaryPart.Position).Magnitude < auradistance then
+            punch(v)
+            wait(.7)
+      end
+        end
+end
+end)
+wait()
+end
+end)
 
 spawn(function()
     game:GetService('RunService').Stepped:connect(function()
-        if myFlags["Autofarm"].Value then
+        if AutofarmOn == true then
             pcall(function()
             game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
             end)
