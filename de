@@ -26,7 +26,7 @@ local Tab4 = GUI:Tab{
 	Name = "Updates",
 	Icon = "rbxassetid://7072717857",
 }
-
+local AutofarmOn = false
 Tab:Toggle{
 	Name = "Enabled",
 	StartingState = false,
